@@ -4,25 +4,33 @@ import { CoinContext } from "../../context/CoinContext";
 import { Link } from "react-router-dom";
 
 const Home = () => {
+  // Get allCoin and currency from CoinContext
   const { allCoin, currency } = useContext(CoinContext);
+  // State to hold displayed coins
   const [displayCoin, setDisplayCoin] = useState([]);
+  // State to hold user input for search
   const [input, setInput] = useState("");
 
+  // Handler for input change
   const inputHandler = (event) => {
     setInput(event.target.value);
+    // Reset displayCoin to allCoin if input is empty
     if (event.target.value === "") {
       setDisplayCoin(allCoin);
     }
   };
 
+  // Handler for search form submission
   const searchHandler = async (event) => {
     event.preventDefault();
+    // Filter coins based on user input
     const coins = await allCoin.filter((item) => {
       return item.name.toLowerCase().includes(input.toLowerCase());
     });
     setDisplayCoin(coins);
   };
 
+  // Reset displayCoin to allCoin when allCoin changes
   useEffect(() => {
     setDisplayCoin(allCoin);
   }, [allCoin]);
@@ -34,9 +42,10 @@ const Home = () => {
           Largest <br /> Crypto Marketplace
         </h1>
         <p>
-          Welcome to the world's largest cyrptocurrency marketplace. Sign up to
+          Welcome to the world's largest cryptocurrency marketplace. Sign up to
           explore more about crypto.
         </p>
+        {/* Search form */}
         <form onSubmit={searchHandler}>
           <input
             onChange={inputHandler}
@@ -46,16 +55,16 @@ const Home = () => {
             list="coinlist"
             required
           />
-
+          {/* Datalist for autocomplete */}
           <datalist id="coinlist">
             {allCoin.map((item, index) => (
               <option key={index} value={item.name} />
             ))}
           </datalist>
-
           <button type="submit">Search</button>
         </form>
       </div>
+      {/* Display top 10 coins */}
       <div className="crypto-table">
         <div className="table-layout">
           <p>#</p>
@@ -72,14 +81,15 @@ const Home = () => {
               <p>{item.name + " - " + item.symbol}</p>
             </div>
             <p>
+              {/* Display current price */}
               {currency.symbol} {item.current_price.toLocaleString()}
             </p>
-            <p
-              className={item.price_change_percentage_24h > 0 ? "green" : "red"}
-            >
+            <p className={item.price_change_percentage_24h > 0 ? "green" : "red"}>
+              {/* Display 24Hr change */}
               {Math.floor(item.price_change_percentage_24h * 100) / 100}
             </p>
             <p className="market-cap">
+              {/* Display market cap */}
               {currency.symbol}
               {item.market_cap.toLocaleString()}
             </p>
